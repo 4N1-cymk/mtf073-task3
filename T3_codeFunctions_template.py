@@ -37,12 +37,12 @@ def calcDistances(dx_PE, dx_WP, dy_PN, dy_SP, dx_we, dy_sn,
     # ADD CODE HERE
     for i in range(1, nI-1):
         for j in range(1, nJ-1):
-            dx_PE[i,j] = 0 # ADD CODE HERE
-            dx_WP[i,j] = 0 # ADD CODE HERE
-            dy_PN[i,j] = 0 # ADD CODE HERE
-            dy_SP[i,j] = 0 # ADD CODE HERE
-            dx_we[i,j] = 0 # ADD CODE HERE
-            dy_sn[i,j] = 0 # ADD CODE HERE
+            dx_PE[i,j] = nodeX[i+1,j] - nodeX[i,j] # ADD CODE HERE x
+            dx_WP[i,j] = nodeX[i,j] - nodeX[i-1,j] # ADD CODE HERE x
+            dy_PN[i,j] = nodeY[i,j+1] - nodeY[i,j] # ADD CODE HERE x
+            dy_SP[i,j] = nodeY[i,j] - nodeY[i,j-1] # ADD CODE HERE x
+            dx_we[i,j] = pointX[i,0] - pointX[i-1,0] # ADD CODE HERE x
+            dy_sn[i,j] = pointY[0,j] - pointY[0,j-1] # ADD CODE HERE x
     
 def calcInterpolationFactors(fxe, fxw, fyn, fys,
                              nI, nJ, dx_PE, dx_WP, dy_PN, dy_SP, dx_we, dy_sn):
@@ -52,10 +52,10 @@ def calcInterpolationFactors(fxe, fxw, fyn, fys,
     # ADD CODE HERE
     for i in range(1, nI-1):
         for j in range(1, nJ-1):
-            fxe[i,j] = 0 # ADD CODE HERE
-            fxw[i,j] = 0 # ADD CODE HERE
-            fyn[i,j] = 0 # ADD CODE HERE
-            fys[i,j] = 0 # ADD CODE HERE 
+            fxe[i,j] = 0.5 * dx_we[i,j] / dx_PE[i,j]
+            fxw[i,j] = 0.5 * dx_we[i,j] / dx_WP[i,j]
+            fyn[i,j] = 0.5 * dy_sn[i,j] / dy_PN[i,j]
+            fys[i,j] = 0.5 * dy_sn[i,j] / dy_SP[i,j]
 
 def initArrays(u, v, p, Fe, Fw, Fn, Fs):
     ################################
@@ -90,11 +90,30 @@ def setInletVelocityAndFlux(u, v, Fe, Fw, Fn, Fs,
     # Cases 11-25: nodeY = H, 1.263541 < nodeX < 1.736459
     match grid_type:
         case 'coarse' | 'newCoarse':
-            # ADD CODE HERE
-            pass
+            # ADD CODE HERE x
+            xMin, xMax = 1.057008, 1.736459
+            jB = nJ -1
+            for i in range (nI):
+                x = nodeX[i,jB]
+                if (x > xMin) and (x < xMax):
+                    u[i,jB] = 0
+                    v[i, jB] = -1.0 
+                    if i in range(1,nI-2):
+                        Fn[i, nJ - 2] = rho * (-1.0) * dx_we[i, nJ - 2]
+            #pass
         case 'fine':
-            # ADD CODE HERE
-            pass
+            # ADD CODE HERE x
+            xMin, xMax = 1.263541, 1.736459
+            jB = nJ - 1
+
+            for i in range(nI):
+                x = nodeX[i,jB]
+                if (x > xMin) and (x < xMax):
+                        u[i,jB] = 0.0
+                        v[i,jB] = -1.0
+                if 1 <= i <= nI - 2:
+                        Fn[i,nJ-2] = -rho * dx_we[i,nJ-2]
+            #pass
         case _:
             sys.exit("Incorrect grid type!")
 
