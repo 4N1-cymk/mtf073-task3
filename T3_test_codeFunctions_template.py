@@ -852,7 +852,7 @@ if not useModData:
 pp = copy.deepcopy(pp_ref)
 ###############################################################################
 # The level should be changed, so change the level first to avoid that a
-# function that doesn't change the lavel is marked as OK
+# function that doesn't change the level is marked as OK
 pp[:,:] += 1.0
 cF.setPressureCorrectionLevel(pp,
                               nI, nJ, pRef_i, pRef_j)
@@ -887,8 +887,9 @@ if not useModData:
 # Reset modified arrays:
 pp = copy.deepcopy(pp_ref)
 ###############################################################################
-# Not necessary to set to zero, but can be done anyway
-p*=0
+# Set p to pp_ref, so that the correction gives 2*pp_ref in  nodes where
+# the pressure should be corrected. Also catches the use of = instead of +=
+p = copy.deepcopy(pp_ref)
 cF.correctPressure(p,
                    nI, nJ, alphaP, pp)
 if check_correctPressure and useModData:
