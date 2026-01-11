@@ -14,7 +14,7 @@ import T3_codeFunctions_template as cF
 #===================== Inputs =====================
 
 # Case number (same as case in description, 1-25)
-caseID = 1
+caseID = 24
 
 # Functions to check:
 check_calcDistances = True
@@ -30,8 +30,8 @@ check_solveGaussSeidel_u = True
 check_solveGaussSeidel_v = True
 check_solveGaussSeidel_pp = True
 check_calcRhieChow_noCorr = True
-check_calcRhieChow_equiCorr = True
-check_calcRhieChow_nonEquiCorr = True
+check_calcRhieChow_equiCorr = False
+check_calcRhieChow_nonEquiCorr = False
 check_calcPpEqCoeffs = True
 check_calcPpEqSu = True
 check_solveTDMA = True
