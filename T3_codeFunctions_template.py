@@ -99,20 +99,21 @@ def setInletVelocityAndFlux(u, v, Fe, Fw, Fn, Fs,
                     u[i,jB] = 0
                     v[i, jB] = -1.0 
                     if i in range(1,nI-2):
-                        Fn[i, nJ - 2] = rho * (-1.0) * dx_we[i, nJ - 2]
+                        Fn[i, nJ - 2] = -rho * dx_we[i, nJ - 2]
             #pass
         case 'fine':
             # ADD CODE HERE x
             xMin, xMax = 1.263541, 1.736459
             jB = nJ - 1
+            el = 1e-6 #float pt tolerence
 
             for i in range(nI):
                 x = nodeX[i,jB]
-                if (x > xMin) and (x < xMax):
+                if (x >= xMin - el) and (x <= xMax + el):
                         u[i,jB] = 0.0
                         v[i,jB] = -1.0
-                if 1 <= i <= nI - 2:
-                        Fn[i,nJ-2] = -rho * dx_we[i,nJ-2]
+                        if i in range(1,nI-1):
+                            Fn[i,nJ-2] = -rho * dx_we[i,nJ-2]
             #pass
         case _:
             sys.exit("Incorrect grid type!")
@@ -345,8 +346,48 @@ def calcRhieChow_equiCorr(Fe, Fw, Fn, Fs,
     # Keep 'nan' where values are not needed!
     # ADD CODE HERE x
     # Pressure-free velocities (same pressure interpolation as in calcMomEqSu)
-    
-    pass
+    tiny = 1e-30
+
+    for i in range(1, nI - 2):
+        for j in range(1, nJ - 1):
+            A = dy_sn[i, j]
+            
+            u_e_lin = fxe[i,j]*u[i+1,j] + (1.0-fxe[i,j])*u[i,j]
+            aP_e = 0.5 * (aP_uv[i, j] + aP_uv[i+1, j])
+            d_e = A / (aP_e + tiny)
+            
+            pW  = p[i-1, j]
+            pP  = p[i,   j]
+            pE  = p[i+1, j]
+            pEE = p[i+2, j]
+
+            u_e = u_e_lin - d_e * (pE - pP) + 0.25 * d_e * ((pEE + pE) - (pP + pW))
+
+            flux = rho * u_e * A
+            Fe[i, j] = flux
+            Fw[i+1, j] = flux
+
+
+    for i in range(1, nI - 1):
+        for j in range(1, nJ - 2):
+            A = dx_we[i, j]
+
+            v_n_lin = fyn[i,j]*v[i,j+1] + (1.0-fyn[i,j])*v[i,j]
+            aP_n = 0.5 * (aP_uv[i, j] + aP_uv[i, j+1])
+            d_n = A / (aP_n + tiny)
+
+            pS  = p[i, j-1]
+            pP  = p[i, j]
+            pN  = p[i, j+1]
+            pNN = p[i, j+2]
+
+            v_n = v_n_lin - d_n * (pN - pP) + 0.25 * d_n * ((pNN + pN) - (pP + pS))
+
+            flux = rho * v_n * A
+            Fn[i, j] = flux
+            Fs[i, j+1] = flux
+            
+    #pass
 
 def calcRhieChow_nonEquiCorr(Fe, Fw, Fn, Fs,
                              nI, nJ, rho, u, v,
@@ -759,3 +800,4 @@ def createDefaultPlots(
 
 def createAdditionalPlots():
     pass
+

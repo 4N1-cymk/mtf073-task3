@@ -30,7 +30,7 @@ check_solveGaussSeidel_u = True
 check_solveGaussSeidel_v = True
 check_solveGaussSeidel_pp = True
 check_calcRhieChow_noCorr = True
-check_calcRhieChow_equiCorr = False
+check_calcRhieChow_equiCorr = True
 check_calcRhieChow_nonEquiCorr = False
 check_calcPpEqCoeffs = True
 check_calcPpEqSu = True
@@ -74,7 +74,7 @@ nLinSolIter_pp = 10             # Number of linear solver iterations for pp-equa
 nLinSolIter_uv = 3              # Number of Gauss-Seidel iterations for u/v-equations
 alphaUV = 0.7   # Under-relaxation factor for u and v
 alphaP  = 0.3   # Under-relaxation factor for p
-grid_type = 'coarse'
+grid_type = 'fine'
 pRef_i = 3
 pRef_j = 3
 # Operation (Set False once to generate all modified data and then only True):
@@ -1095,3 +1095,17 @@ if not useModData:
             Fw_cFF = Fw_cFF,
             Fn_cFF = Fn_cFF,
             Fs_cFF = Fs_cFF)
+
+
+
+
+
+
+
+
+
+
+
+
+
+

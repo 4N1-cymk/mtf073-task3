@@ -41,7 +41,7 @@ import T3_codeFunctions_template as cF
 caseID    =  24
 
 # Geometric and mesh inputs (mesh is read from file)
-grid_type = 'coarse'  # Either 'coarse', 'fine' or 'newCoarse' (or your own)
+grid_type = 'fine'  # Either 'coarse', 'fine' or 'newCoarse' (or your own)
 
 # Case inputs:
 rho   =  1     # Density
@@ -67,7 +67,7 @@ alphaUV        = 0.7            # Under-relaxation factor for u and v
 alphaP         = 0.3            # Under-relaxation factor for p
 linSol_pp      = 'TDMA'         # Either 'GS' or 'TDMA'
 scheme         = 'Hybrid'       # Either 'FOU_CD' or 'Hybrid'
-RhieChow       = 'noCorr'     # Either 'noCorr', 'equiCorr' or 'nonEquiCorr'
+RhieChow       = 'equiCorr'     # Either 'noCorr', 'equiCorr' or 'nonEquiCorr'
 pRef_i = 3 # P=0 in some internal node (1..nI-2, not on boundary)
 pRef_j = 3 # P=0 in some internal node (1..nJ-2, not on boundary)
 
@@ -371,3 +371,5 @@ cF.createDefaultPlots(
 # No arrays should be changed!
 cF.createAdditionalPlots(
                           )
+
+
